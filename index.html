@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PokéStall - האירוע הרשמי</title>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pokedex-red: #dc0a2d;
+            --pokedex-dark-red: #8b0000;
+            --screen-blue: #28a0ed;
+            --pika-yellow: #fbd100;
+            --gold: linear-gradient(45deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+        }
+
+        body {
+            font-family: 'Assistant', sans-serif;
+            margin: 0;
+            background: radial-gradient(circle, #2c3e50 0%, #000000 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        /* שלדת הפוקדקס */
+        .pokedex-container {
+            width: 95%;
+            max-width: 900px;
+            background: var(--pokedex-red);
+            border: 10px solid #333;
+            border-radius: 40px;
+            position: relative;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8), inset 0 0 20px rgba(0,0,0,0.5);
+            overflow: hidden;
+        }
+
+        /* נורת הלד של הפוקדקס */
+        .top-lights {
+            padding: 20px;
+            display: flex;
+            gap: 15px;
+            background: var(--pokedex-dark-red);
+            border-bottom: 5px solid #333;
+        }
+
+        .big-blue-light {
+            width: 50px; height: 50px;
+            background: white;
+            border-radius: 50%;
+            border: 4px solid white;
+            box-shadow: 0 0 20px #28a0ed;
+            background: radial-gradient(circle at 30% 30%, #28a0ed, #000);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 10px #28a0ed; }
+            50% { box-shadow: 0 0 30px #28a0ed; }
+            100% { box-shadow: 0 0 10px #28a0ed; }
+        }
+
+        /* המסך המרכזי */
+        .pokedex-screen {
+            background: #dedede;
+            margin: 20px;
+            border-radius: 20px;
+            border: 15px solid #333;
+            color: #333;
+            padding: 0;
+            overflow-y: auto;
+            max-height: 80vh;
+            position: relative;
+        }
+
+        .screen-header {
+            background: #51ad60; /* צבע Gameboy קלאסי */
+            padding: 15px;
+            text-align: center;
+            border-bottom: 4px solid #333;
+        }
+
+        .screen-header h1 {
+            margin: 0; font-weight: 900; letter-spacing: -1px; color: #1a3a1f;
+        }
+
+        /* כרטיסי אספנות הולוגרפיים */
+        .card-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            padding: 20px;
+        }
+
+        .tcg-card {
+            background: white;
+            border-radius: 10px;
+            padding: 10px;
+            border: 6px solid #e5c05b;
+            position: relative;
+            transition: 0.3s;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .tcg-card:hover {
+            transform: translateY(-5px) rotate(2deg);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+        }
+
+        /* אפקט הברק ההולוגרפי (Rainbow Rare) */
+        .holo-shine::before {
+            content: "";
+            position: absolute;
+            top: -100%; left: -100%;
+            width: 300%; height: 300%;
+            background: linear-gradient(115deg, transparent 20%, rgba(255,255,255,0.3) 30%, rgba(255,0,0,0.2) 40%, rgba(0,255,0,0.2) 50%, rgba(0,0,255,0.2) 60%, transparent 80%);
+            transition: 0.5s;
+            pointer-events: none;
+        }
+        .tcg-card:hover .holo-shine::before {
+            top: -50%; left: -50%;
+        }
+
+        .card-image {
+            background: #f0f0f0;
+            height: 120px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+            border: 2px solid #ddd;
+        }
+
+        .pika-svg { width: 100px; filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.2)); }
+
+        .soccer-card { background: var(--gold); color: #443300; border-color: #aa771c; }
+
+        /* מידע הטריינר */
+        .trainer-info {
+            background: #333;
+            color: #51ad60;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            border-top: 4px solid #111;
+        }
+
+        .important-msg {
+            background: #ffcc00;
+            color: black;
+            padding: 15px;
+            text-align: center;
+            font-weight: 900;
+            border-radius: 10px;
+            margin: 20px;
+            box-shadow: 5px 5px 0 #000;
+        }
+
+        .pokedex-buttons {
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .d-pad {
+            width: 80px; height: 80px;
+            background: #333;
+            position: relative;
+            clip-path: polygon(35% 0%, 65% 0%, 65% 35%, 100% 35%, 100% 65%, 65% 65%, 65% 100%, 35% 100%, 35% 65%, 0% 65%, 0% 35%, 35% 35%);
+        }
+
+        @media (max-width: 600px) {
+            .card-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="pokedex-container">
+        <div class="top-lights">
+            <div class="big-blue-light"></div>
+            <div style="width: 15px; height: 15px; background: #8b0000; border-radius: 50%; border: 2px solid #333;"></div>
+            <div style="width: 15px; height: 15px; background: #daa520; border-radius: 50%; border: 2px solid #333;"></div>
+            <div style="width: 15px; height: 15px; background: #228b22; border-radius: 50%; border: 2px solid #333;"></div>
+        </div>
+
+        <div class="pokedex-screen">
+            <div class="screen-header">
+                <h1>דוכן הפוקימון - TRAINER EVENT</h1>
+            </div>
+
+            <div class="card-grid">
+                <!-- קלף פוקימון הולוגרפי -->
+                <div class="tcg-card holo-shine">
+                    <div class="card-image">
+                        <svg class="pika-svg" viewBox="0 0 100 100">
+                            <!-- Pikachu Pro Detail -->
+                            <path d="M30 25 Q10 0 25 0 L40 25 M70 25 Q90 0 75 0 L60 25" fill="#333"/>
+                            <path d="M32 28 Q15 5 28 5 L42 28 M68 28 Q85 5 72 5 L58 28" fill="#fbd100"/>
+                            <circle cx="50" cy="55" r="35" fill="#fbd100" stroke="#333" stroke-width="1.5"/>
+                            <circle cx="35" cy="50" r="4.5" fill="#333"/> <circle cx="36.5" cy="48.5" r="1.5" fill="white"/>
+                            <circle cx="65" cy="50" r="4.5" fill="#333"/> <circle cx="66.5" cy="48.5" r="1.5" fill="white"/>
+                            <circle cx="22" cy="65" r="7" fill="#ff4444" opacity="0.8"/>
+                            <circle cx="78" cy="65" r="7" fill="#ff4444" opacity="0.8"/>
+                            <path d="M45 65 Q50 70 55 65" fill="none" stroke="#333" stroke-width="2"/>
+                            <!-- Lightning Tail -->
+                            <path d="M85 85 L95 65 L80 70 L90 50 L75 60" fill="none" stroke="#fbd100" stroke-width="4" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div style="color:#111; font-weight: 800;">קלפי Rare / Ultra</div>
+                    <div style="font-size: 0.8rem; color: #666;">שווי שוק: $0.90 - $20.00</div>
+                    <div style="text-align: left; font-size: 0.7rem; color: #e5c05b;">★★★★★</div>
+                </div>
+
+                <!-- קלף כדורגל מוזהב -->
+                <div class="tcg-card soccer-card holo-shine">
+                    <div class="card-image" style="background: rgba(0,0,0,0.1);">
+                        <svg width="60" height="60" viewBox="0 0 24 24" fill="#443300">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+                            <path d="M12 7l-1.5 4.5H6l3.75 3L8.25 19 12 16.5l3.75 2.5-1.5-4.5 3.75-3h-4.5L12 7z"/>
+                        </svg>
+                    </div>
+                    <div style="font-weight: 800;">קלפי כדורגל VIP</div>
+                    <div style="font-size: 0.8rem;">מהדורות זהב מוגבלות</div>
+                    <div style="text-align: left; font-size: 0.7rem;">ELITE SERIES</div>
+                </div>
+            </div>
+
+            <div class="important-msg">
+                ⚠️ חוקי הדוכן: תשלום בשקלים בלבד (מזומן)! אין אפשרות לדולרים.
+            </div>
+
+            <div class="trainer-info">
+                > LOCATION: MEYBLOOM 13 (UNDER BUILDING)<br>
+                > DATE: MAY 30TH<br>
+                > TIME: 10:00 AM<br>
+                > STATUS: READY FOR TRADES_
+            </div>
+        </div>
+
+        <div class="pokedex-buttons">
+            <div class="d-pad"></div>
+            <div style="display: flex; gap: 10px;">
+                <div style="width: 40px; height: 40px; background: #333; border-radius: 50%; box-shadow: 3px 3px 0 #000;"></div>
+                <div style="width: 40px; height: 40px; background: #333; border-radius: 50%; box-shadow: 3px 3px 0 #000;"></div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
